@@ -1,4 +1,4 @@
-import shutil, os, time, subprocess, sys
+import shutil, os, time
 import webbrowser as wb
 
 from datetime import datetime
@@ -72,12 +72,15 @@ while run:
 			shutil.copytree(paths[0], directory+'/players')
 			shutil.copytree(paths[1], directory+'/worlds')
 		else:
-			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-			time.sleep(1)
-			os.makedirs(savepath +directory)
-			shutil.copytree(paths[0], savepath +directory+'/players')
-			shutil.copytree(paths[1], savepath +directory+'/worlds')
-
+			try:
+				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
+				time.sleep(1)
+				os.makedirs(savepath +directory)
+				shutil.copytree(paths[0], savepath +directory+'/players')
+				shutil.copytree(paths[1], savepath +directory+'/worlds')
+			except PermissionError:
+				print('<Run with admin rights>')
+				continue
 
 	if mode == '1':
 		name = ['terraria.exe','Terraria.exe']
@@ -143,12 +146,15 @@ while run:
 			shutil.copytree(paths[0], directory+'/players')
 			shutil.copytree(paths[1], directory+'/worlds')
 		else:
-			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-			time.sleep(1)
-			os.makedirs(savepath +directory)
-			shutil.copytree(paths[0], savepath +directory+'/players')
-			shutil.copytree(paths[1], savepath +directory+'/worlds')
-
+			try:
+				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
+				time.sleep(1)
+				os.makedirs(savepath +directory)
+				shutil.copytree(paths[0], savepath +directory+'/players')
+				shutil.copytree(paths[1], savepath +directory+'/worlds')
+			except PermissionError:
+				print('<Run with admin rights>')
+				continue
 
 		if path.ans == 'NANS':
 			print('If u wanna support me, u can send me a donation 👉👈')
