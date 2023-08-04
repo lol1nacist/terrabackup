@@ -11,7 +11,11 @@ else:
 		pass
 time.sleep(0.5)
 import path
-print('Terrabackup alpha 0.0.1')
+
+ver = 'v0.0.2-alpha'
+downloadlink = 'https://www.github.com/lol1nacist/terrabackup'
+print('Terrabackup', ver)
+print(downloadlink)
 print('<For more run with admin rights>')
 print()
 time.sleep(0.8)
@@ -21,16 +25,28 @@ else:
 	savepath = path.savepath
 run = True
 savecount = False
+
+def make_archive(src, dst):
+        base = os.path.basename(dst)
+        name = base.split('.')[0]
+        format = base.split('.')[1]
+        archive_from = os.path.dirname(src)
+        archive_to = os.path.basename(src.strip(os.sep))
+        shutil.make_archive(name, format, archive_from, archive_to)
+        shutil.move(os.path.expandvars(name+'.'+format), dst)
+
 while run:
 	import path
 	print('Enter using mode')
 	print('0 -- Backup')
 	print('1 -- Backup and play')
-	print('2 -- Load latest backup')
+	print('2 -- Load latest backup [Not working]')
 	print('3 -- Customize save path')
 	print('4 -- Just start Terraria')
+	print('5 -- Check for updates [Not working]')
 	print()
 	mode = str(input())
+	print()
 
 	if savecount:
 		path.savepath = dsavepath
@@ -68,16 +84,18 @@ while run:
 		if path.savepath == 'SAVEPATH' and savepath == '':
 			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
 			time.sleep(1)
+			print('It may take a bit longer...')
 			os.makedirs(directory)
-			shutil.copytree(paths[0], directory+'/players')
-			shutil.copytree(paths[1], directory+'/worlds')
+			make_archive(paths[0], directory+'/players.zip')
+			make_archive(paths[1], directory+'/worlds.zip')
+
 		else:
 			try:
 				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
 				time.sleep(1)
 				os.makedirs(savepath +directory)
-				shutil.copytree(paths[0], savepath +directory+'/players')
-				shutil.copytree(paths[1], savepath +directory+'/worlds')
+				make_archive(paths[0], savepath +directory+'/players.zip')
+				make_archive(paths[1], savepath +directory+'/worlds.zip')
 			except PermissionError:
 				print('<Run with admin rights>')
 				continue
@@ -143,15 +161,15 @@ while run:
 			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
 			time.sleep(1)
 			os.makedirs(directory)
-			shutil.copytree(paths[0], directory+'/players')
-			shutil.copytree(paths[1], directory+'/worlds')
+			make_archive(paths[0], directory+'/players.zip')
+			make_archive(paths[1], directory+'/worlds.zip')
 		else:
 			try:
 				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
 				time.sleep(1)
 				os.makedirs(savepath +directory)
-				shutil.copytree(paths[0], savepath +directory+'/players')
-				shutil.copytree(paths[1], savepath +directory+'/worlds')
+				make_archive(paths[0], savepath +directory+'/players.zip')
+				make_archive(paths[1], savepath +directory+'/worlds.zip')
 			except PermissionError:
 				print('<Run with admin rights>')
 				continue
@@ -221,3 +239,9 @@ while run:
 			os.startfile(path.path)
 		except Exception:
 			print('Launch backup mode for the first time')
+
+	if mode == '5':
+		print('Not working at the moment')
+		print('Stay tuned for next updates')
+
+	print()
