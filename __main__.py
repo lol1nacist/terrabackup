@@ -1,247 +1,130 @@
-import shutil, os, time
-import webbrowser as wb
+import dearpygui.dearpygui as dpg
 
+import shutil, os, importlib, time, tkinter
 from datetime import datetime
 
-if 'path.py' in os.listdir():
-	pass
-else:
-	with open('path.py', 'w') as file:
-		file.write("path = 'PATH'\ncustompath = 'CUSTOMPATH'\nsavepath = 'SAVEPATH'\nans = 'NANS'")
-		pass
-time.sleep(0.5)
+if not 'path.py' in os.listdir():
+	with open('path.py', 'w') as filename:
+		filename.write('''path = 'PATH'
+terraria_path = 'TERRARIA_PATH' ''')
+
 import path
 
-ver = 'v0.0.2-alpha'
-downloadlink = 'https://www.github.com/lol1nacist/terrabackup'
-print('Terrabackup', ver)
-print(downloadlink)
-print('<For more run with admin rights>')
-print()
-time.sleep(0.8)
-if path.savepath == "SAVEPATH":
-	savepath = ''
-else:
-	savepath = path.savepath
-run = True
-savecount = False
+root = tkinter.Tk()
 
-def make_archive(src, dst):
-        base = os.path.basename(dst)
-        name = base.split('.')[0]
-        format = base.split('.')[1]
-        archive_from = os.path.dirname(src)
-        archive_to = os.path.basename(src.strip(os.sep))
-        shutil.make_archive(name, format, archive_from, archive_to)
-        shutil.move(os.path.expandvars(name+'.'+format), dst)
-
-while run:
-	import path
-	print('Enter using mode')
-	print('0 -- Backup')
-	print('1 -- Backup and play')
-	print('2 -- Load latest backup [Not working]')
-	print('3 -- Customize save path')
-	print('4 -- Just start Terraria')
-	print('5 -- Check for updates [Not working]')
-	print()
-	mode = str(input())
-	print()
-
-	if savecount:
-		path.savepath = dsavepath
-
-	if mode == '0':
-		if path.custompath == 'CUSTOMPATH':
-			paths = [os.path.expandvars('C:/Users/%username%/documents/my games/terraria/players'),
-				 	 os.path.expandvars('C:/Users/%username%/documents/my games/terraria/worlds')]
-		else:
-			paths = [path.custompath + '/players',
-					 path.custompath + '/worlds']
-
-		try:
-			for i in paths: os.listdir(i)
-
-		except FileNotFoundError:
-			print('File not found, please enter manually:')
-			if path.custompath == 'CUSTOMPATH':
-				custompath = input()
-				new_custom_path = ''
-				for i in custompath:
-					if i not in R'\\':
-						new_custom_path += i
-					else:
-						new_custom_path += '/'
-				with open('path.py', 'r') as file:
-					pathtext = file.read()
-				with open('path.py', 'w') as file:
-					file.write(pathtext.replace("'CUSTOMPATH'", new_custom_path))
-				print('Please, restart this program to save the changes')
-				time.sleep(3)
-				quit()
+width = 531
+height = 390
 
 
-		if path.savepath == 'SAVEPATH' and savepath == '':
-			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-			time.sleep(1)
-			print('It may take a bit longer...')
-			os.makedirs(directory)
-			make_archive(paths[0], directory+'/players.zip')
-			make_archive(paths[1], directory+'/worlds.zip')
+class gui:
 
-		else:
-			try:
-				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-				time.sleep(1)
-				os.makedirs(savepath +directory)
-				make_archive(paths[0], savepath +directory+'/players.zip')
-				make_archive(paths[1], savepath +directory+'/worlds.zip')
-			except PermissionError:
-				print('<Run with admin rights>')
-				continue
-
-	if mode == '1':
-		name = ['terraria.exe','Terraria.exe']
-		new_terraria_path = ''
+	
+	def make_archive(self, src, dst):
+		base = os.path.basename(dst)
+		name = base.split('.')[0]
+		format = base.split('.')[1]
+		archive_from = os.path.dirname(src)
+		archive_to = os.path.basename(src.strip(os.sep))
+		shutil.make_archive(name, format, archive_from, archive_to)
+		shutil.move(os.path.expandvars(name+'.'+format), dst)
 
 
-		if path.path == 'PATH':
-			print('Please enter the Terraria.ink path:')
-			terraria_path = str(input())
-		else:
-			terraria_path = path.path
+	def set_path(self, sender, args):
+		importlib.reload(path)
+	
+		with open('path.py', 'r') as filename:
+			text = filename.read()
 
+		new_path = ''
 
-
-		new_terraria_path = ''
-
-		for i in list(terraria_path):
-			if i not in R'\\':
-				new_terraria_path += i
+		for i in args['current_path']:
+			if i in '\\':
+				new_path += '/'
 			else:
-				new_terraria_path += '/'
+				new_path += i
 
-		terraria_path = new_terraria_path
+		with open('path.py', 'w') as filename:
+			filename.write(text.replace("'"+ path.path +"'", "'" + new_path + "'"))
 
-		if path.custompath == 'CUSTOMPATH':
-			paths = [os.path.expandvars('C:/Users/%username%/documents/my games/terraria/players'),
-				 	 os.path.expandvars('C:/Users/%username%/documents/my games/terraria/worlds')]
-		else:
-			paths = [path.custompath + '/players',
-					 path.custompath + '/worlds']
+	def set_terraria_path(self, sender, args):
 
-		with open('path.py', 'r') as file:
-			pathtext = str(file.read())
-		with open('path.py', 'w') as file:
-			file.write(pathtext.replace("'PATH'", "'"+new_terraria_path+"'"))
+		importlib.reload(path)
+	
+		with open('path.py', 'r') as filename:
+			text = filename.read()
 
-		try:
-			for i in paths: os.listdir(i)
+		new_path = ''
 
-		except FileNotFoundError:
-			print('File not found, please enter manually:')
-			if path.custompath == 'CUSTOMPATH':
-				custompath = input()
-				new_custom_path = ''
-				for i in custompath:
-					if i not in R'\\':
-						new_custom_path += i
-					else:
-						new_custom_path += '/'
-				with open('path.py', 'r') as file:
-					pathtext = file.read()
-				with open('path.py', 'w') as file:
-					file.write(pathtext.replace("'CUSTOMPATH'", new_custom_path))
-				print('Please, restart this program to save the changes')
-				time.sleep(3)
-				quit()
-
-
-		if path.savepath == 'SAVEPATH' and savepath == '':
-			directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-			time.sleep(1)
-			os.makedirs(directory)
-			make_archive(paths[0], directory+'/players.zip')
-			make_archive(paths[1], directory+'/worlds.zip')
-		else:
-			try:
-				directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
-				time.sleep(1)
-				os.makedirs(savepath +directory)
-				make_archive(paths[0], savepath +directory+'/players.zip')
-				make_archive(paths[1], savepath +directory+'/worlds.zip')
-			except PermissionError:
-				print('<Run with admin rights>')
-				continue
-
-		if path.ans == 'NANS':
-			print('If u wanna support me, u can send me a donation 👉👈')
-			print("even u send 1$ i'll be happy")
-
-			print('')
-
-			time.sleep(0.5)
-			print('Open donations page? [Y/N]')
-			if path.ans == 'NANS':
-				ans=input('')
+		for i in args['current_path']:
+			if i in '\\':
+				new_path += '/'
 			else:
-				ans = path.ans
+				new_path += i
 
-			if ans == ('Y'):
-				wb.open('https://www.donationalerts.com/r/pryzrak538')
-				time.sleep(5)
-			elif ans == ('N'):
-				with open('path.py', 'r') as file:
-					pathtext = file.read()
-				with open('path.py', 'w') as file:
-					file.write(pathtext.replace('NANS', 'N'))
-		print('Thanks for using this program')
-		print()
-		print('Terraria is loading...')
+		with open('path.py', 'w') as filename:
+			filename.write(text.replace("'"+ path.terraria_path +"'", "'" + new_path + "'"))
+
+
+	def backup(self):
+		importlib.reload(path)
+
+	
+		directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
 		time.sleep(1)
-		os.startfile(terraria_path)
-		run = False
+		os.makedirs(directory)
+		self.make_archive(path.path + '/players', directory+'/players.zip')
+		self.make_archive(path.path + '/worlds', directory+'/worlds.zip')
 
-	if mode == '2':
-		print('Not working at the moment')
-		print('Stay tuned for next updates')
 
-	if mode == '3':
-		if not savecount: 		
-			dsavepath = path.savepath
-		print(dsavepath, savepath, path.savepath)
-		print('Enter custom save path:')
-		print()
-		savepath = str(input())
-		new_savepath = ''
-		for i in list(savepath):
-			if not i in R'\\':
-				new_savepath += i
-			else:
-				new_savepath += '/'
+			
+
+
+	def backup_and_play(self):
+		importlib.reload(path)
+
+		directory = str(datetime.now())[:10]+' '+str(datetime.now().hour)+'-'+str(datetime.now().minute)+'-'+str(datetime.now().second)
+		time.sleep(1)
+		os.makedirs(directory)
+		self.make_archive(path.path + '/players', directory+'/players.zip')
+		self.make_archive(path.path + '/worlds', directory+'/worlds.zip')
+
+		os.startfile(path.terraria_path + '/terraria.ink')
+		quit()
+
+
+	def play(self):
+		importlib.reload(path)
+
+		os.startfile(path.terraria_path + '/terraria.ink')
+		quit()
+
+
+
+	def __init__(self):
+
+		importlib.reload(path)
+
+
+		dpg.create_context()
 		
-		with open('path.py', 'r') as file:
-			pathtext = file.read()
-			file.close()
-		print(pathtext)
-		with open('path.py', 'w') as file:
-			file.write(pathtext.replace("'"+ dsavepath +"'", "'"+new_savepath+"'"))
-			file.close()
-
-		savecount = True
-		
-		if savecount:
-			dsavepath = new_savepath
+		dpg.add_file_dialog(tag = 'terraria_saves_path', directory_selector = True, width = 470, height = 400, show = False, callback = self.set_path)
+		dpg.add_file_dialog(tag = 'terraria_path', directory_selector = True, width = 470, height = 400, show = False, callback = self.set_terraria_path)
 		
 
-	if mode == '4':
-		try:
-			os.startfile(path.path)
-		except Exception:
-			print('Launch backup mode for the first time')
+		with dpg.window(label = "Terrabackup v0.0.3-alpha", width = 640, height = 480, no_move = True, no_resize = True, no_collapse = True):
+			dpg.add_text('Firstly set all paths', tag = 'fuck', show = False)
+			dpg.add_button(label = 'Backup', width = 500, height = 60, callback = self.backup)
+			dpg.add_button(label = 'Backup and Play', width = 500, height = 60, callback = self.backup_and_play)
+			dpg.add_button(label = 'Set path Terraria saves [FOLDER ONLY]', width = 500, height = 60,  callback = lambda: dpg.show_item('terraria_saves_path'))
+			dpg.add_button(label = 'Set path to Terraria.ink [FOLDER ONLY]', width = 500, height = 60,  callback = lambda: dpg.show_item('terraria_path'))
+			dpg.add_button(label = 'Just starts Terraria', width = 500, height = 60, callback = self.play)
 
-	if mode == '5':
-		print('Not working at the moment')
-		print('Stay tuned for next updates')
 
-	print()
+		dpg.create_viewport(title ='Some Title', resizable = False, width = width, height = height, x_pos = (root.winfo_screenwidth() // 2) - width//2, y_pos = (root.winfo_screenheight() // 2) - height//2)
+		dpg.setup_dearpygui()
+		dpg.show_viewport()
+		dpg.start_dearpygui()
+		dpg.destroy_context()
+
+if __name__ == '__main__':
+	g = gui()
