@@ -15,6 +15,23 @@ root = tkinter.Tk()
 width = 531
 height = 390
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+def print_file(file_path):
+    file_path = resource_path(file_path)
+    with open(file_path) as fp:
+        for line in fp:
+            print(line)
+            
+if __name__ == '__main__':
+    print_file('path.py')
+
 
 class gui:
 
@@ -107,11 +124,12 @@ class gui:
 
 		dpg.create_context()
 		
-		dpg.add_file_dialog(tag = 'terraria_saves_path', directory_selector = True, width = 470, height = 400, show = False, callback = self.set_path)
-		dpg.add_file_dialog(tag = 'terraria_path', directory_selector = True, width = 470, height = 400, show = False, callback = self.set_terraria_path)
+		try:
+			dpg.add_file_dialog(tag = 'terraria_saves_path', directory_selector = True, default_path = 'C:/', width = 400, height = 250, show = False, callback = self.set_path)
+			dpg.add_file_dialog(tag = 'terraria_path', directory_selector = True, default_path = 'C:/', width = 400, height = 250, show = False, callback = self.set_terraria_path)
 		
 
-		with dpg.window(label = "Terrabackup v0.0.3-alpha", width = 640, height = 480, no_move = True, no_resize = True, no_collapse = True):
+		with dpg.window(label = "Terrabackup v0.0.3-alpha", width = 640, height = 480, no_move = True, no_resize = True, no_collapse = False):
 			dpg.add_text('Firstly set all paths', tag = 'fuck', show = False)
 			dpg.add_button(label = 'Backup', width = 500, height = 60, callback = self.backup)
 			dpg.add_button(label = 'Backup and Play', width = 500, height = 60, callback = self.backup_and_play)
